@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>neub_snek — neubrutalist snake</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-grid" id="app">
+    <aside class="card left-card" id="statsCard" aria-label="game statistics">
+      <h2>stats</h2>
+      <div class="stat"><span>score</span><strong id="score">0</strong></div>
+      <div class="stat"><span>highscore</span><strong id="highscore">0</strong></div>
+      <div class="stat"><span>length</span><strong id="length">1</strong></div>
+      <div class="stat"><span>speed</span><strong id="speedDisplay">1</strong></div>
+      <div class="stat"><span>level</span><strong id="level">1</strong></div>
+      <hr />
+      <div class="legend">
+        <small>controls: arrows / wasd • swipe (mobile)</small>
+      </div>
+    </aside>
+
+    <section class="card center-card" id="gameCard">
+      <h2>neub_snek</h2>
+      <div class="canvas-wrap">
+        <canvas id="gameCanvas" width="640" height="640" aria-label="snake game canvas"></canvas>
+        <div id="overlayHint" class="overlay-hint" aria-hidden="true">press start</div>
+        <div class="touch-arrows horizontal" id="touchArrows" aria-hidden="true">
+          <button data-dir="left" class="arrow">◀</button>
+          <button data-dir="up" class="arrow">▲</button>
+          <button data-dir="down" class="arrow">▼</button>
+          <button data-dir="right" class="arrow">▶</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card right-card" id="controlsCard" aria-label="game controls">
+      <h2>controls</h2>
+
+      <div class="controls-row">
+        <button id="startBtn" class="btn primary" aria-pressed="false">start</button>
+        <button id="pauseBtn" class="btn" aria-pressed="false">pause</button>
+        <button id="restartBtn" class="btn" aria-pressed="false">restart</button>
+      </div>
+
+      <label class="control">
+        <span>show grid</span>
+        <input type="checkbox" id="showGrid" />
+      </label>
+
+      <label class="control">
+        <span>wrap edges</span>
+        <input type="checkbox" id="wrapToggle" />
+      </label>
+
+      <label class="control">
+        <span>obstacles</span>
+        <input type="checkbox" id="obstaclesToggle" />
+      </label>
+
+      <label class="control">
+        <span>base speed</span>
+        <input type="range" id="speedSlider" min="1" max="8" value="3" />
+        <small id="speedLabel">3</small>
+      </label>
+
+      <label class="control">
+        <span>tile size</span>
+        <select id="tileSizeSelect">
+          <option value="16">16</option>
+          <option value="20" selected>20</option>
+          <option value="24">24</option>
+          <option value="32">32</option>
+        </select>
+      </label>
+
+      <label class="control">
+        <span>mute</span>
+        <button id="muteBtn" class="btn">toggle</button>
+      </label>
+
+      <hr />
+      <small>settings persist. keys: neub_snek_highscore / neub_snek_settings / neub_snek_muted</small>
+    </aside>
+  </main>
+
+  <script src="sounds.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
