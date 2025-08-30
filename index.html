@@ -658,35 +658,36 @@
                 }, 150);
             });
 
+            function isSmallDevice() {
+                return window.innerWidth <= 900 || (window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+            }
+
             gameCards.forEach((card, index) => {
+                const playButton = card.querySelector('.play-button');
+
                 card.addEventListener('click', (e) => {
-                    const isTouchDevice = 'ontouchstart' in window;
-                    
-                    if (isTouchDevice && e.target === card) {
+                    // On small devices, clicking anywhere on the card goes to the game
+                    if (isSmallDevice()) {
                         e.preventDefault();
-                        
-                        if (activeCard && activeCard !== card) {
-                            activeCard.classList.remove('active');
-                        }
-                        
-                        card.classList.toggle('active');
-                        activeCard = card.classList.contains('active') ? card : null;
-                        
+                        document.body.classList.add('zoom-out');
+                        pageTransition.classList.add('active');
+                        setTimeout(() => {
+                            window.location.href = playButton.href;
+                        }, 300);
                         // Quick haptic feedback
                         if ('vibrate' in navigator) {
                             navigator.vibrate(30);
                         }
+                        return;
                     }
+                    // ...existing code for desktop (hover, overlay, etc)...
                 });
 
-                const playButton = card.querySelector('.play-button');
                 playButton.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     document.body.classList.add('zoom-out');
                     pageTransition.classList.add('active');
-                    
-                    // Navigate faster
                     setTimeout(() => {
                         window.location.href = playButton.href;
                     }, 300);
@@ -698,7 +699,6 @@
                         e.preventDefault();
                         playButton.click();
                     }
-                    
                     // Arrow navigation
                     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
                         const nextCard = gameCards[index + 1] || gameCards[0];
