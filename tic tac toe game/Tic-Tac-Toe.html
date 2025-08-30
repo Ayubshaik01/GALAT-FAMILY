@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Neu-Brutal Tic-Tac-Toe</title>
+
+  <!--
+    Single-file Neu-Brutal Tic-Tac-Toe
+    - Vanilla HTML / CSS / JS
+    - Palette variables: --black, --gray, --white
+    - Features: 2-player, vs-AI easy/hard (minimax), undo, restart,
+      scoreboard persisted to localStorage, keyboard navigation, accessibility.
+  -->
+
+  <style>
+    :root{
+      --black: #000000;
+      --gray:  #9EA3A8;
+      --white: #FFFFFF;
+      --accent: #00A676; /* optional accent for win */
+      --border-thick: 6px;
+      --gap: 18px;
+      --radius: 8px; /* slight blocky rounding */
+    }
+
+    /* Page reset + layout */
+    html,body{height:100%;margin:0;}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background: var(--white);
+      color: var(--black);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+
+    /* App card - neu-brutalism: thick border, blocky card */
+    .app {
+      width: min(920px, 96vw);
+      display:grid;
+      grid-template-columns: 1fr 300px;
+      gap: var(--gap);
+      padding: 20px;
+      border: var(--border-thick) solid var(--black);
+      border-radius: var(--radius);
+      background: var(--white);
+      box-sizing: border-box;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display:flex;
+      gap:16px;
+      align-items:center;
+      position: relative;
+    }
+
+    .sound-toggle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sound-toggle svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--black);
+    }
+
+    .sound-toggle[data-muted="true"] .unmuted,
+    .sound-toggle[data-muted="false"] .muted {
+      display: none;
+    }
+
+    /* Mobile adjustments for sound toggle */
+    @media (max-width: 520px) {
+      .sound-toggle {
+        position: static;
+        transform: none;
+        margin-left: auto;
+      }
+    }
+
+    .logo {
+      width:60px;height:60px;
+      border: var(--border-thick) solid var(--black);
+      display:grid;place-items:center;
+      font-weight:800;font-size:18px;
+      background: var(--white);
+      border-radius:6px;
+    }
+
+    h1{margin:0;font-size:20px;}
+    p.lead{margin:0;color:var(--gray);font-size:13px;}
+
+    /* Skip link for keyboard users / screen readers */
+    .skip-link {
+      position: absolute;
+      top: -48px;
+      left: 8px;
+      background: var(--black);
+      color: var(--white);
+      padding: 8px 12px;
+      text-decoration: none;
+      font-weight:700;
+      z-index:1000;
+    }
+    .skip-link:focus { top: 8px; outline: 4px solid var(--gray); outline-offset:2px; }
+
+    /* Left column: board area */
+    .board-wrap{
+      border: var(--border-thick) solid var(--black);
+      padding:20px;
+      border-radius:6px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      align-items:center;
+      background:var(--white);
+    }
+
+    /* Board grid */
+    .board{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Cell buttons - blocky, thick border */
+    .cell{
+      aspect-ratio: 1 / 1;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border: var(--border-thick) solid var(--black);
+      background: var(--white);
+      font-weight:800;
+      font-size:36px;
+      cursor:pointer; 
+      user-select:none;
+      padding:0;
+      border-radius:6px;
+      transition: transform 80ms linear;
+    }
+
+    /* Press transform (subtle) */
+    .cell:active { transform: scale(0.96); }
+
+    /* Focus styles: very visible outline (accessibility requirement) */
+    .cell:focus,
+    button:focus,
+    select:focus,
+    .skip-link:focus {
+      outline: 4px solid var(--gray);
+      outline-offset: 2px;
+    }
+
+    /* Win highlight: bold outline around winning trio with animation */
+    .cell.win {
+      outline: 6px solid var(--accent);
+      outline-offset: -6px;
+      animation: winPulse 1s ease infinite;
+    }
+
+    @keyframes winPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Cell click animation */
+    .cell-click {
+      animation: cellClick 0.3s ease;
+    }
+
+    @keyframes cellClick {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    /* Winner celebration overlay */
+    .celebration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      animation: celebrate 1s ease-out;
+      opacity: 0;
+    }
+
+    @keyframes celebrate {
+      0% { 
+        opacity: 0.8;
+        background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      }
+      100% { 
+        opacity: 0;
+        background: radial-gradient(circle, var(--accent) 0%, transparent 100%);
+      }
+    }
+
+    /* Right column: controls & scoreboard - same brutalist card style */
+    .panel {
+      border: var(--border-thick) solid var(--black);
+      padding: 18px;
+      border-radius:6px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      background:var(--white);
+    }
+
+    .score-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+    .score-item{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      font-weight:700;
+    }
+    .score-badge{
+      min-width:46px;
+      text-align:center;
+      padding:8px 6px;
+      border: 4px solid var(--black);
+      background:var(--white);
+      font-weight:800;
+    }
+
+    .controls { 
+      display: flex; 
+      gap: 8px; 
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .controls button { 
+      border: var(--border-thick) solid var(--black); 
+      padding: 8px 10px; 
+      background: var(--white); 
+      cursor: pointer; 
+      border-radius: 6px; 
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .controls button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Mode buttons specific styles */
+    .mode-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-btn.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .mode-btn:not(.active) {
+      opacity: 0.8;
+    }
+
+    /* Status banner/region */
+    #status {
+      min-height:1.4em;
+      font-weight:800;
+      text-align:center;
+      color:var(--black);
+    }
+
+    /* Invalid move banner - appears briefly at top center */
+    #banner {
+      position: fixed;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      background: var(--black);
+      color: var(--white);
+      padding: 8px 12px;
+      font-weight:800;
+      border: 4px solid var(--black);
+      display: none;
+    }
+
+    /* Make layout responsive: stack under 520px */
+    @media (max-width: 520px){
+      body {
+        padding: 16px;
+        min-height: 100vh;
+        align-items: flex-start;
+      }
+
+      .app { 
+        grid-template-columns: 1fr;
+        width: 100%;
+        padding: 12px;
+      }
+
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+        padding-bottom: 12px;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 18px;
+      }
+
+      .lead {
+        font-size: 12px;
+      }
+
+      .board { 
+        max-width: 320px; 
+        gap: 8px;
+      }
+
+      .cell { 
+        font-size: 24px;
+        border-width: 4px;
+      }
+
+      .panel {
+        padding: 12px;
+      }
+
+      .controls {
+        justify-content: center;
+      }
+
+      .controls button, 
+      select[type="select"] {
+        padding: 6px 8px;
+        font-size: 14px;
+      }
+
+      .score-badge {
+        min-width: 40px;
+        padding: 6px 4px;
+      }
+    }
+
+    /* Additional small screen optimizations */
+    @media (max-width: 360px) {
+      body {
+        padding: 8px;
+      }
+
+      .app {
+        padding: 8px;
+      }
+
+      .board {
+        max-width: 280px;
+        gap: 6px;
+      }
+
+      .cell {
+        font-size: 22px;
+      }
+
+      .controls button {
+        padding: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip link -->
+  <a href="#board" class="skip-link">Skip to board</a>
+
+  <main class="app" role="application" aria-labelledby="title" aria-describedby="subtitle">
+    <!-- Header -->
+    <header>
+      <div class="logo" aria-hidden="true">TTT</div>
+      <div>
+        <h1 id="title">Tic-Tac-Toe</h1>
+        <p id="subtitle" class="lead">play 2-player or vs AI.</p>
+      </div>
+      <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound" data-muted="true">
+        <svg class="unmuted" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg class="muted" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Board column -->
+    <section class="board-wrap" aria-label="Game board area">
+      <!-- Banner for invalid moves -->
+      <div id="banner" role="alert" aria-live="assertive"></div>
+
+      <!-- Board: 3x3 buttons, role=grid -->
+      <div id="board" class="board" role="grid" aria-label="Tic Tac Toe board" tabindex="0">
+        <!-- Cells generated by JS for cleanliness, but include markup fallback for noscript -->
+        <button class="cell" role="gridcell" data-index="0" aria-label="Cell 1, empty"></button>
+        <button class="cell" role="gridcell" data-index="1" aria-label="Cell 2, empty"></button>
+        <button class="cell" role="gridcell" data-index="2" aria-label="Cell 3, empty"></button>
+        <button class="cell" role="gridcell" data-index="3" aria-label="Cell 4, empty"></button>
+        <button class="cell" role="gridcell" data-index="4" aria-label="Cell 5, empty"></button>
+        <button class="cell" role="gridcell" data-index="5" aria-label="Cell 6, empty"></button>
+        <button class="cell" role="gridcell" data-index="6" aria-label="Cell 7, empty"></button>
+        <button class="cell" role="gridcell" data-index="7" aria-label="Cell 8, empty"></button>
+        <button class="cell" role="gridcell" data-index="8" aria-label="Cell 9, empty"></button>
+      </div>
+
+      <!-- Status region -->
+      <p id="status" role="status" aria-live="polite">Loading...</p>
+    </section>
+
+    <!-- Right column: controls & scoreboard -->
+    <aside class="panel" aria-label="Controls and scoreboard">
+      <!-- Scoreboard -->
+      <div>
+        <div class="score-row" aria-hidden="false">
+          <div class="score-item">
+            <div class="score-badge" id="score-x">0</div>
+            <div>X</div>
+          </div>
+          <div class="score-item">
+            <div class="score-badge" id="score-draw">0</div>
+            <div>Draws</div>
+          </div>
+          <div class="score-item">
+            <div class="score-badge" id="score-o">0</div>
+            <div>O</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls" role="group" aria-label="Game controls">
+        <button id="undo">Undo</button>
+        <button id="restart">Restart</button>
+        <button id="new-round">New Round</button>
+        <button id="reset-scores">Reset Scores</button>
+        <button id="mode-2p" class="mode-btn active" data-mode="2p">2-Player</button>
+        <button id="mode-easy" class="mode-btn" data-mode="ai-easy">vs AI (Easy)</button>
+        <button id="mode-hard" class="mode-btn" data-mode="ai-hard">vs AI (Hard)</button>
+      </div>
+
+      <!-- Small help text -->
+      <div style="color:var(--gray);font-size:13px;">
+        Use Tab to focus cells, Arrow keys to move, Enter/Space to mark.
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    /* Neu-Brutal Tic-Tac-Toe - Vanilla JS
+       - Accessible buttons (aria-labels)
+       - role="grid"/"gridcell", status region
+       - Keyboard navigation and Enter/Space to play
+       - Modes: 2-player, ai-easy (random), ai-hard (minimax)
+       - Undo, restart, scoreboard persisted to localStorage
+       - Small sound feedback (WebAudio), optional toggle
+       - Invalid move banner (0.8s)
+    */
+
+    /***********************
+     * State & DOM handles *
+     ***********************/
+    const boardEl = document.getElementById('board');
+    const cells = () => Array.from(boardEl.querySelectorAll('.cell'));
+    const statusEl = document.getElementById('status');
+    const bannerEl = document.getElementById('banner');
+
+    const scoreXEl = document.getElementById('score-x');
+    const scoreOEl = document.getElementById('score-o');
+    const scoreDrawEl = document.getElementById('score-draw');
+
+    const undoBtn = document.getElementById('undo');
+    const restartBtn = document.getElementById('restart');
+    const newRoundBtn = document.getElementById('new-round');
+    const resetScoresBtn = document.getElementById('reset-scores');
+    const soundToggle = document.getElementById('soundToggle');
+    const modeButtons = document.querySelectorAll('.mode-btn');
+
+    // Game state
+    let board = Array(9).fill(null); // null | 'X' | 'O'
+    let history = [];                 // previous board states for undo
+    let currentPlayer = 'X';          // 'X' or 'O'
+    let gameActive = true;            // false when round ends
+    let scores = { X: 0, O: 0, Draw: 0 }; // persisted
+    let lastRoundResult = null;       // store last round winner to revert on undo if necessary
+
+    // Settings
+    let mode = '2p'; // '2p' | 'ai-easy' | 'ai-hard'
+    let soundOn = false;
+
+    // Winning combos
+    const WIN_LINES = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    /***********************
+     * Initialization
+     ***********************/
+    // Boot
+    initGame();
+
+    function initGame(){
+      // Load scores from localStorage
+      const saved = safeParse(localStorage.getItem('nbttt-scores'));
+      if (saved && typeof saved === 'object') scores = Object.assign(scores, saved);
+      updateScoreUI();
+
+      // Bind events
+      boardEl.addEventListener('click', onBoardClick);
+      boardEl.addEventListener('keydown', onBoardKeyDown);
+      undoBtn.addEventListener('click', undoMove);
+      restartBtn.addEventListener('click', restartRound);
+      newRoundBtn.addEventListener('click', () => startRound('X'));
+      resetScoresBtn.addEventListener('click', resetScores);
+      soundToggle.addEventListener('click', toggleSound);
+      
+      // Add click handlers for mode buttons
+      modeButtons.forEach(btn => {
+        btn.addEventListener('click', onModeButtonClick);
+      });
+
+      // Ensure cells have tabindex and data-index
+      ensureCells();
+
+      // Start first round
+      startRound('X');
+    }
+
+    function safeParse(s){ try { return JSON.parse(s); } catch(e){ return null; } }
+
+    /***********************
+     * Core functions
+     ***********************/
+    // Start a new round (does not reset scores)
+    function startRound(startingPlayer='X'){
+      // clear previous win highlights
+      clearWinHighlights();
+
+      board = Array(9).fill(null);
+      history = [];
+      currentPlayer = startingPlayer;
+      gameActive = true;
+      lastRoundResult = null;
+      updateUI();
+      announce(`${currentPlayer}'s turn`);
+      // If AI starts and mode is AI, let AI move
+      if (mode !== '2p' && currentPlayer === 'O'){
+        // slight delay for natural feel
+        setTimeout(() => aiMove(), 220);
+      }
+    }
+
+    // Handle click on board (using event delegation)
+    function onBoardClick(e){
+      const btn = e.target.closest('.cell');
+      if (!btn) return;
+      const idx = Number(btn.dataset.index);
+      handleCellClick(idx);
+    }
+
+    // Handle playing a cell by index
+    function handleCellClick(index){
+      if (!gameActive){
+        // If round ended, tapping should prompt a new round hint
+        showBanner('Round over — start a new round', 800);
+        return;
+      }
+      if (typeof index !== 'number' || index < 0 || index > 8) return;
+
+      // If cell occupied, brief invalid banner
+      if (board[index] !== null){
+        showBanner('Invalid move!', 800);
+        playDenySound();
+        return;
+      }
+
+      // Save snapshot for undo
+      history.push(board.slice());
+
+      // Place mark and animate cell
+      board[index] = currentPlayer;
+      const cell = boardEl.querySelector(`.cell[data-index="${index}"]`);
+      cell.classList.add('cell-click');
+      setTimeout(() => cell.classList.remove('cell-click'), 300);
+      playClickSound();
+      updateUI();
+
+      // Check for winner or draw
+      const win = checkWinner(board);
+      if (win){
+        // End round: highlight and update scoreboard
+        gameActive = false;
+        highlightWin(win.combo);
+        scores[win.winner] = (scores[win.winner]||0) + 1;
+        lastRoundResult = { winner: win.winner, combo: win.combo };
+        persistScores();
+        updateScoreUI();
+        
+        // Play win animation and sound
+        playWinSound();
+        const celebration = document.createElement('div');
+        celebration.className = 'celebration';
+        document.body.appendChild(celebration);
+        setTimeout(() => celebration.remove(), 1000);
+        
+        announce(`${win.winner} wins!`);
+        return;
+      }
+
+      if (isDraw(board)){
+        gameActive = false;
+        scores.Draw = (scores.Draw||0) + 1;
+        lastRoundResult = { winner: 'Draw' };
+        persistScores();
+        updateScoreUI();
+        playDrawSound();
+        announce(`It's a draw`);
+        return;
+      }
+
+      // Toggle player and possibly let AI play
+      togglePlayer();
+
+      if (mode !== '2p' && currentPlayer === 'O'){
+        // AI turn
+        setTimeout(() => aiMove(), 180);
+      }
+    }
+
+    // Toggle current player
+    function togglePlayer(){
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      announce(`${currentPlayer}'s turn`);
+    }
+
+    // Check winner: returns { winner:'X'|'O', combo:[i,j,k] } or null
+    function checkWinner(b){
+      for (const line of WIN_LINES){
+        const [a,b1,c] = line;
+        if (b[a] && b[a] === b[b1] && b[a] === b[c]){
+          return { winner: b[a], combo: line.slice() };
+        }
+      }
+      return null;
+    }
+
+    // Draw detection
+    function isDraw(b){
+      return b.every(cell => cell !== null) && !checkWinner(b);
+    }
+
+    // Update UI: render cells + aria labels + focusability
+    function updateUI(){
+      cells().forEach((btn, idx) => {
+        const val = board[idx];
+        btn.textContent = val || '';
+        btn.setAttribute('aria-label', `Cell ${idx+1}, ${val ? val : 'empty'}`);
+        // disable pointer events on filled cells to prevent double-quick races,
+        // but keep them focusable for keyboard (so user can attempt and receive banner)
+        if (val !== null) {
+          btn.dataset.filled = 'true';
+        } else {
+          delete btn.dataset.filled;
+        }
+      });
+    }
+
+    // Highlight winning trio (adds .win class)
+    function highlightWin(combo){
+      combo.forEach(i => {
+        const btn = boardEl.querySelector(`.cell[data-index="${i}"]`);
+        if (btn) btn.classList.add('win');
+      });
+    }
+
+    // Clear win highlights
+    function clearWinHighlights(){
+      cells().forEach(c => c.classList.remove('win'));
+    }
+
+    // Undo last move (revert board & player; if undoing a round result, revert scores)
+    function undoMove(){
+      if (history.length === 0) {
+        showBanner('Nothing to undo', 600);
+        return;
+      }
+
+      // If lastRoundResult exists (round ended), revert its score increment
+      if (!gameActive && lastRoundResult){
+        if (lastRoundResult.winner === 'Draw'){
+          scores.Draw = Math.max(0, (scores.Draw||0) - 1);
+        } else if (lastRoundResult.winner){
+          scores[lastRoundResult.winner] = Math.max(0, (scores[lastRoundResult.winner]||0) - 1);
+        }
+        persistScores();
+        updateScoreUI();
+        lastRoundResult = null;
+      }
+
+      // Pop history to previous state
+      board = history.pop();
+      gameActive = true;
+      // restore player: opposite of the one who made the last move
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      clearWinHighlights();
+      updateUI();
+      announce(`${currentPlayer}'s turn`);
+    }
+
+    // Restart round: clear board but keep scores
+    function restartRound(){
+      startRound('X');
+    }
+
+    /***********************
+     * AI: easy (random) & hard (minimax)
+     ***********************/
+    function aiMove(){
+      if (!gameActive) return;
+      let move = null;
+      if (mode === 'ai-easy') {
+        const empties = board.map((v,i)=> v===null ? i : null).filter(i=> i!==null);
+        move = empties[Math.floor(Math.random()*empties.length)];
+      } else if (mode === 'ai-hard') {
+        move = findBestMoveMinimax(board, 'O');
+      }
+      if (typeof move === 'number' && move >= 0){
+        handleCellClick(move);
+      }
+    }
+
+    // Minimax wrapper: returns best index for player 'O' (AI)
+    function findBestMoveMinimax(b, aiPlayer){
+      // Top-level explore all moves and choose best score
+      const empties = b.map((v,i)=> v===null ? i : null).filter(i=> i!==null);
+      if (empties.length === 0) return null;
+
+      let bestScore = -Infinity;
+      let bestMove = empties[0];
+
+      for (const idx of empties){
+        b[idx] = aiPlayer;
+        const score = minimax(b, false, aiPlayer);
+        b[idx] = null;
+        if (score > bestScore){
+          bestScore = score;
+          bestMove = idx;
+        }
+      }
+      return bestMove;
+    }
+
+    // Minimax algorithm: returns numeric score for board from perspective of aiPlayer
+    function minimax(b, isMaximizing, aiPlayer){
+      const opponent = aiPlayer === 'O' ? 'X' : 'O';
+      const win = checkWinner(b);
+      if (win){
+        if (win.winner === aiPlayer) return +10;
+        if (win.winner === opponent) return -10;
+      }
+      if (isDraw(b)) return 0;
+
+      // Explore moves
+      const empties = b.map((v,i)=> v===null ? i : null).filter(i=> i!==null);
+      // Depth-based slight bias for faster wins / slower losses
+      let best = isMaximizing ? -Infinity : +Infinity;
+
+      for (const idx of empties){
+        b[idx] = isMaximizing ? aiPlayer : opponent;
+        const score = minimax(b, !isMaximizing, aiPlayer);
+        b[idx] = null;
+        if (isMaximizing){
+          best = Math.max(best, score);
+        } else {
+          best = Math.min(best, score);
+        }
+      }
+      return best;
+    }
+
+    /***********************
+     * Keyboard navigation
+     ***********************/
+    // Move focus with arrow keys; Enter/Space to play
+    function onBoardKeyDown(e){
+      const focusable = cells();
+      const current = document.activeElement;
+      const idx = focusable.indexOf(current);
+      // If focus not on a cell, do nothing (but allow board container to receive focus)
+      if (idx === -1) return;
+
+      let next = idx;
+      switch (e.key){
+        case 'ArrowRight':
+          e.preventDefault();
+          next = (idx + 1) % 9;
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          next = (idx + 8) % 9;
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          next = (idx + 3) % 9;
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          next = (idx + 6) % 9;
+          break;
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          handleCellClick(idx);
+          return;
+        default:
+          return;
+      }
+      focusable[next].focus();
+    }
+
+    /***********************
+     * UI helpers & sound
+     ***********************/
+    // Banner for invalid / transient messages
+    let bannerTimer = null;
+    function showBanner(text, duration = 800){
+      bannerEl.textContent = text;
+      bannerEl.style.display = 'block';
+      if (bannerTimer) clearTimeout(bannerTimer);
+      bannerTimer = setTimeout(()=> {
+        bannerEl.style.display = 'none';
+        bannerEl.textContent = '';
+      }, duration);
+    }
+
+    // Announce status (also writes to statusEl)
+    function announce(text){
+      statusEl.textContent = text;
+      // also expose in aria-live via statusEl (role=status)
+    }
+
+    // Enhanced Sound System via WebAudio
+    function createAudioContext() {
+      return new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playClickSound(){
+      if (!soundOn) return;
+      try {
+        const ctx = createAudioContext();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = 440;
+        g.gain.value = 0.1;
+        o.connect(g); g.connect(ctx.destination);
+        o.start();
+        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        o.stop(ctx.currentTime + 0.1);
+      } catch (e) { /* ignore if unavailable */ }
+    }
+
+    function playDenySound(){
+      if (!soundOn) return;
+      try {
+        const ctx = createAudioContext();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'square';
+        o.frequency.setValueAtTime(330, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.1);
+        g.gain.value = 0.07;
+        o.connect(g); g.connect(ctx.destination);
+        o.start();
+        o.stop(ctx.currentTime + 0.15);
+      } catch (e) { /* ignore */ }
+    }
+
+    function playWinSound() {
+      if (!soundOn) return;
+      try {
+        const ctx = createAudioContext();
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+        notes.forEach((freq, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freq;
+          g.gain.value = 0.1;
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.start(ctx.currentTime + i * 0.1);
+          g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.1 + 0.3);
+          o.stop(ctx.currentTime + i * 0.1 + 0.3);
+        });
+      } catch (e) { /* ignore */ }
+    }
+
+    function playDrawSound() {
+      if (!soundOn) return;
+      try {
+        const ctx = createAudioContext();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(440, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(220, ctx.currentTime + 0.2);
+        g.gain.value = 0.1;
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start();
+        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        o.stop(ctx.currentTime + 0.2);
+      } catch (e) { /* ignore */ }
+    }
+
+    /***********************
+     * Persistence & misc
+     ***********************/
+    function persistScores(){
+      try { localStorage.setItem('nbttt-scores', JSON.stringify(scores)); } catch(e){}
+    }
+
+    function updateScoreUI(){
+      scoreXEl.textContent = scores.X || 0;
+      scoreOEl.textContent = scores.O || 0;
+      scoreDrawEl.textContent = scores.Draw || 0;
+    }
+
+    // Ensure cells have proper attributes (data-index, tabindex)
+    function ensureCells(){
+      cells().forEach((btn, i) => {
+        btn.setAttribute('data-index', String(i));
+        btn.setAttribute('role', 'gridcell');
+        btn.tabIndex = 0;
+        // Click and key handling are delegated on container
+      });
+    }
+
+    // Mode change handler
+    function onModeButtonClick(e) {
+      const newMode = e.target.dataset.mode;
+      if (newMode === mode) return; // Don't do anything if same mode clicked
+
+      // Update active state of buttons
+      modeButtons.forEach(btn => {
+        btn.classList.remove('active');
+      });
+      e.target.classList.add('active');
+
+      // Update mode and restart game
+      mode = newMode;
+      playClickSound();
+      startRound('X');
+    }
+
+    // Clear highlight and scores optionally; expose restart
+    function restartRound(){
+      startRound('X');
+    }
+
+    // Toggle sound and update icon
+    function toggleSound() {
+      soundOn = !soundOn;
+      soundToggle.setAttribute('data-muted', (!soundOn).toString());
+      if (soundOn) {
+        playClickSound();
+      }
+    }
+
+    // Reset all scores to zero
+    function resetScores() {
+      scores = { X: 0, O: 0, Draw: 0 };
+      persistScores();
+      updateScoreUI();
+      showBanner('Scores reset!', 800);
+      playClickSound();
+    }
+
+    /***********************
+     * Utility: Prevent double-click race
+     ***********************/
+    // Disable rapid double-click by briefly disabling pointer events on clicked cell
+    // (We implement via dataset.filled check and saving snapshots - combined ensure safety.)
+
+    /***********************
+     * Finalize: render initial UI & focus
+     ***********************/
+    updateUI();
+    updateScoreUI();
+    // Put initial focus on first cell for keyboard users
+    const firstCell = boardEl.querySelector('.cell[data-index="0"]');
+    if (firstCell) firstCell.tabIndex = 0;
+
+    // Expose some helpers to console for debugging
+    window.nbttt = {
+      getState: () => ({ board: board.slice(), currentPlayer, gameActive, historyLength: history.length, scores }),
+      startRound, undoMove
+    };
+  </script>
+</body>
+</html>
