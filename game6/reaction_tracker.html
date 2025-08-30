@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Reaction Trainer - Galat Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+   <!-- Home Button  -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+  <div class="page">
+    <div class="card" id="app">
+      <header>
+        <div>
+          <h1>⚡ Reaction Trainer</h1>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div id="bestBadge" class="pill">🏆 Best</div>
+        </div>
+      </header>
+
+      <main id="homeScreen">
+        <div class="controls">
+          <div class="small">Controls: PvP = <b>A</b> / <b>L</b> • PvE = <b>SPACE</b> • Click/Tap panels to react</div>
+        </div>
+
+        <div class="home-grid">
+          <div class="mode-card">
+            <div style="font-weight:900">Play</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <button class="btn" id="startPVP">Player vs Player</button>
+              <button class="btn" id="startPVE">Player vs AI</button>
+            </div>
+
+            <div style="margin-top:10px" class="small">AI difficulty:</div>
+            <div style="margin-top:8px">
+              <select id="aiDifficulty" style="font-weight:900;padding:.6rem;border:6px solid var(--ink);border-radius:12px;box-shadow:8px 8px 0 var(--ink)">
+                <option value="easy">Easy (300–600 ms)</option>
+                <option value="medium" selected>Medium (200–400 ms)</option>
+                <option value="hard">Hard (120–250 ms)</option>
+              </select>
+            </div>
+
+            <div style="margin-top:12px" class="small">Match type (first to win):</div>
+            <div style="margin-top:8px">
+              <select id="matchBestOf" style="font-weight:900;padding:.6rem;border:6px solid var(--ink);border-radius:12px;box-shadow:8px 8px 0 var(--ink)">
+                <option value="3">Best of 3</option>
+                <option value="5" selected>Best of 5</option>
+                <option value="7">Best of 7</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="mode-card">
+            <div style="font-weight:900">Best</div>
+            <div id="bestScore" style="font-weight:900;margin-top:8px">🏆 Best Score: —</div>
+            <div style="margin-top:8px" class="small">Try to beat your personal best.</div>
+            <div style="margin-top:10px">
+              <button class="btn" id="exportCSV">Export History (CSV)</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:12px" class="mode-card history">
+          <h3>Round History (latest on top)</h3>
+          <ul id="historyList"></ul>
+        </div>
+      </main>
+
+      <!-- GAME -->
+      <section id="gameScreen" class="game-area" aria-live="polite">
+        <div class="top-row">
+          <div id="modeTitle" style="font-weight:900">Mode</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="roundState">Waiting</div>
+            <button class="btn" id="returnHome">🏠 Return Home</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+          <div style="font-weight:900">Score</div>
+          <div id="scoreBoard" style="display:flex;gap:12px;align-items:center;font-weight:900">
+            <div>Player 1: <span id="wins1">0</span></div>
+            <div>Player 2: <span id="wins2">0</span></div>
+          </div>
+        </div>
+
+        <div class="arena">
+          <div id="panel1" class="panel" role="button" aria-label="Player 1 panel">
+            <div class="label"><div class="avatar p1">P1</div> Player 1</div>
+            <div id="time1" class="time">—</div>
+          </div>
+
+          <div id="panel2" class="panel" role="button" aria-label="Player 2 panel">
+            <div class="label"><div class="avatar p2" id="avatar2">P2</div> <span id="label2">Player 2</span></div>
+            <div id="time2" class="time">—</div>
+          </div>
+        </div>
+
+        <div class="touch-row" style="margin-top:12px">
+          <button class="touch-btn" id="touchP1">P1 (Tap)</button>
+          <button class="touch-btn" id="touchP2">P2 (Tap)</button>
+        </div>
+
+      </section>
+
+      <div id="tlOverlay" class="tl-overlay" style="display:none">
+        <div class="tl" id="tlBox" role="dialog" aria-label="Traffic lights">
+          <div style="font-weight:900">Get Ready</div>
+          <div class="lights" aria-hidden="true">
+            <div id="lightRed" class="light red"></div>
+            <div id="lightYellow" class="light yellow"></div>
+            <div id="lightGreen" class="light green"></div>
+          </div>
+          <div class="small">Red → Yellow → Green</div>
+        </div>
+      </div>
+
+      <div class="signal-text" style="display:none">
+        <div id="sigTxt" class="txt">READY</div>
+      </div>
+
+      <div class="confetti" id="confetti"></div>
+
+    </div>
+  </div>
+
+  <div id="matchBanner" class="match-banner"></div>
+
+
+</body>
+</html>

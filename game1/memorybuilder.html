@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Builder - Galat Games</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Home Button -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+    <!-- Sound Controls -->
+    <div class="sound-controls">
+        <button class="sound-btn" id="soundToggle" onclick="toggleSound()" title="Toggle Sound">
+            🔊
+        </button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <div class="logo">Memory Builder</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="showInstructions()">HOW TO PLAY</button>
+                <button class="nav-btn" onclick="showSettings()">SETTINGS</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Game Layout -->
+    <div class="game-layout">
+        <!-- Game Stats - Left Side on Desktop -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">MOVES</span>
+                <span class="stat-value" id="moves">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">TIME</span>
+                <span class="stat-value" id="timer">00:00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MATCHES</span>
+                <span class="stat-value" id="matches">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">SCORE</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+        </div>
+
+        <!-- Game Container - Center -->
+        <div class="game-container">
+            <div class="game-grid" id="gameGrid" data-size="12"></div>
+        </div>
+
+        <!-- Controls - Right Side on Desktop -->
+        <div class="controls">
+            <button class="btn" onclick="newGame()">NEW GAME</button>
+            <button class="btn secondary" onclick="showLevels()">LEVELS</button>
+            <button class="btn secondary" onclick="pauseGame()">PAUSE</button>
+            <button class="btn secondary hint-btn" onclick="hintCard()" id="hintBtn" data-hints="3">HINT</button>
+        </div>
+    </div>
+
+    <!-- Game Complete Modal -->
+    <div class="overlay" id="gameModal">
+        <div class="overlay-content">
+            <h2 id="modalTitle">VICTORY!</h2>
+            <p id="modalText">Congratulations! You completed the memory challenge.</p>
+            <div class="modal-stats" id="modalStats"></div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px;">
+                <button class="btn" onclick="closeModal(); newGame();">PLAY AGAIN</button>
+                <button class="btn secondary" onclick="closeModal(); showLevels();">CHANGE LEVEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Selection Modal - Updated Difficulties -->
+    <div class="overlay" id="levelModal">
+        <div class="overlay-content">
+            <h2>SELECT DIFFICULTY</h2>
+            <div class="level-selector">
+                <button class="level-btn active" onclick="setLevel(12)">EASY<br>4×3<br>12 cards</button>
+                <button class="level-btn" onclick="setLevel(18)">HARD<br>6×3<br>18 cards</button>
+                <button class="level-btn" onclick="setLevel(36)">EXPERT<br>6×6<br>36 cards</button>
+            </div>
+            <button class="btn" onclick="closeModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div class="overlay" id="instructionsModal">
+        <div class="overlay-content">
+            <h2>HOW TO PLAY</h2>
+            <div style="text-align: left; max-width: 350px; margin: 0 auto;">
+                <p><strong>🎯 OBJECTIVE:</strong> Find all matching pairs</p>
+                <p><strong>🎮 GAMEPLAY:</strong> Click cards to flip them</p>
+                <p><strong>🔄 MATCHING:</strong> Match two identical symbols</p>
+                <p><strong>⏰ TIMING:</strong> Complete as fast as possible</p>
+                <p><strong>🏆 SCORING:</strong> Fewer moves = higher score</p>
+                <p><strong>💡 HINT:</strong> Use hint button when stuck (limited uses)</p>
+                <p><strong>✨ EFFECTS:</strong> Matching cards glow red briefly</p>
+            </div>
+            <button class="btn" onclick="closeModal()" style="margin-top: 15px;">GOT IT!</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="overlay" id="settingsModal">
+        <div class="overlay-content">
+            <h2>SETTINGS</h2>
+            <div style="max-width: 300px; margin: 0 auto;">
+                <div class="settings-grid">
+                    <span><strong>Sound Effects:</strong></span>
+                    <button class="btn secondary" onclick="toggleSound()" id="soundSetting">ON</button>
+                </div>
+                <div class="settings-grid">
+                    <span><strong>Preview Time:</strong></span>
+                    <button class="btn secondary" onclick="changePreviewTime()" id="previewTime">2s</button>
+                </div>
+                <div class="settings-grid">
+                    <span><strong>Hints Available:</strong></span>
+                    <span id="hintsLeft">3</span>
+                </div>
+                <div class="settings-grid">
+                    <span><strong>Hint Cooldown:</strong></span>
+                    <span id="hintCooldown">Ready</span>
+                </div>
+            </div>
+            <button class="btn" onclick="closeModal()" style="margin-top: 15px;">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Pause Modal -->
+    <div class="overlay" id="pauseModal">
+        <div class="overlay-content">
+            <h2>GAME PAUSED</h2>
+            <p>Take a break! Your progress is saved.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px;">
+                <button class="btn" onclick="resumeGame()">RESUME</button>
+                <button class="btn secondary" onclick="closeModal(); newGame();">NEW GAME</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

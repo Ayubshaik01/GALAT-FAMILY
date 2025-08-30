@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tic-Tac-Toe - Galat Games</title>
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Home Button  -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+  <a href="#board" class="skip-link">Skip to board</a>
+
+  <main class="app" role="application" aria-labelledby="title" aria-describedby="subtitle">
+    <!-- Header -->
+    <header>
+      <div class="logo" aria-hidden="true">TTT</div>
+      <div>
+        <h1 id="title">Tic-Tac-Toe</h1>
+        <p id="subtitle" class="lead">play 2-player or vs AI.</p>
+      </div>
+      <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound" data-muted="true">
+        <svg class="unmuted" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg class="muted" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Board column -->
+    <section class="board-wrap" aria-label="Game board area">
+      <!-- Banner for invalid moves -->
+      <div id="banner" role="alert" aria-live="assertive"></div>
+      <div id="board" class="board" role="grid" aria-label="Tic Tac Toe board" tabindex="0">
+        <button class="cell" role="gridcell" data-index="0" aria-label="Cell 1, empty"></button>
+        <button class="cell" role="gridcell" data-index="1" aria-label="Cell 2, empty"></button>
+        <button class="cell" role="gridcell" data-index="2" aria-label="Cell 3, empty"></button>
+        <button class="cell" role="gridcell" data-index="3" aria-label="Cell 4, empty"></button>
+        <button class="cell" role="gridcell" data-index="4" aria-label="Cell 5, empty"></button>
+        <button class="cell" role="gridcell" data-index="5" aria-label="Cell 6, empty"></button>
+        <button class="cell" role="gridcell" data-index="6" aria-label="Cell 7, empty"></button>
+        <button class="cell" role="gridcell" data-index="7" aria-label="Cell 8, empty"></button>
+        <button class="cell" role="gridcell" data-index="8" aria-label="Cell 9, empty"></button>
+      </div>
+
+      <p id="status" role="status" aria-live="polite">Loading...</p>
+    </section>
+
+    <aside class="panel" aria-label="Controls and scoreboard">
+      <!-- Scoreboard -->
+      <div>
+        <div class="score-row" aria-hidden="false">
+          <div class="score-item">
+            <div class="score-badge" id="score-x">0</div>
+            <div>X</div>
+          </div>
+          <div class="score-item">
+            <div class="score-badge" id="score-draw">0</div>
+            <div>Draws</div>
+          </div>
+          <div class="score-item">
+            <div class="score-badge" id="score-o">0</div>
+            <div>O</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls" role="group" aria-label="Game controls">
+        <button id="undo">Undo</button>
+        <button id="restart">Restart</button>
+        <button id="new-round">New Round</button>
+        <button id="reset-scores">Reset Scores</button>
+        <button id="mode-2p" class="mode-btn active" data-mode="2p">2-Player</button>
+        <button id="mode-easy" class="mode-btn" data-mode="ai-easy">vs AI (Easy)</button>
+        <button id="mode-hard" class="mode-btn" data-mode="ai-hard">vs AI (Hard)</button>
+      </div>
+
+      <!-- Small help text -->
+      <div style="color:var(--gray);font-size:13px;">
+        Use Tab to focus cells, Arrow keys to move, Enter/Space to mark.
+      </div>
+    </aside>
+  </main>
+
+<script src="script.js"></script>
+</body>
+</html>

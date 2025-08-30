@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeChallenge Pro - Galat Games</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Home Button -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+    <div class="app-container">
+        <!-- Clean Header with Mini Best Scores -->
+        <header class="header">
+            <div class="logo">TypeChallenge Pro</div>
+            <div class="best-scores-mini" onclick="showBestScores()">
+                🏆 Best Scores
+            </div>
+        </header>
+
+        <!-- Control Panel with Dropdowns -->
+        <div class="control-panel">
+            <div class="dropdown-group">
+                <div class="dropdown-label">Difficulty Level</div>
+                <select class="dropdown" id="level-dropdown">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+
+            <div class="dropdown-group">
+                <div class="dropdown-label">Content Type</div>
+                <select class="dropdown" id="content-dropdown">
+                    <option value="words">Words</option>
+                    <option value="sentences">Sentences</option>
+                </select>
+            </div>
+
+            <div class="dropdown-group">
+                <div class="dropdown-label">Time Mode</div>
+                <select class="dropdown" id="time-dropdown">
+                    <option value="60">Default</option>
+                    <option value="infinite">Infinite</option>
+                </select>
+            </div>
+
+            <div class="control-buttons">
+                <button class="control-btn restart" id="restart-btn">Restart</button>
+                <button class="control-btn" id="sound-btn">🔊</button>
+            </div>
+        </div>
+
+        <!-- Stats Display -->
+        <div class="stats-row">
+            <div class="stat-box">
+                <span class="stat-value" id="wpm-display">0</span>
+                <div class="stat-label">WPM</div>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value" id="accuracy-display">100</span>
+                <div class="stat-label">Accuracy %</div>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value" id="timer-display">60</span>
+                <div class="stat-label">Time Left</div>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value" id="streak-display">0</span>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value" id="completed-display">0</span>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <!-- Main Game Area - Fixed Container -->
+        <main class="game-area">
+            <div class="difficulty-badge" id="difficulty-badge">Easy Level</div>
+            <div class="content-display" id="content-display"></div>
+            <input type="text" class="typing-input" id="typing-input" 
+                   placeholder="Click here and start typing..." 
+                   autocomplete="off" spellcheck="false" autocorrect="off">
+        </main>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <span id="progress-left">Ready to Start</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <span id="progress-right">Press Enter to continue</span>
+        </div>
+    </div>
+
+    <!-- Best Scores Modal -->
+    <div class="modal-overlay" id="scores-modal">
+        <div class="modal">
+            <h2>🏆 Best Scores</h2>
+            <div class="score-list" id="score-list">
+                <div class="score-item">No scores yet - start playing!</div>
+            </div>
+            <button class="control-btn" onclick="closeScoresModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal-overlay" id="game-over-modal">
+        <div class="modal">
+            <h2>Game Complete!</h2>
+            <div class="modal-stats" id="modal-stats"></div>
+            <div class="tips-section" id="tips-section"></div>
+            <button class="control-btn" onclick="closeGameOverModal()">Play Again</button>
+        </div>
+    </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

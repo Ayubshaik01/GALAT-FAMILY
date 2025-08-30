@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Builder - Galat Games</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Home Button  -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+
+    <!-- How to Play Modal -->
+    <div class="modal-overlay" id="howToPlayModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal" aria-label="Close modal">×</button>
+            <div class="modal-header">
+                <h2 class="modal-title">How to Play Story Builder</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>🎯 Objective</h3>
+                    <p>Arrange the scattered words in the correct order to form a meaningful sentence before time runs out!</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>🕹️ How to Play</h3>
+                    <ul>
+                        <li><strong>Drag & Drop:</strong> Drag words from the Word Pool to the Story Area</li>
+                        <li><strong>Click to Move:</strong> Click any word to move it between areas</li>
+                        <li><strong>Auto-Check:</strong> Your story is automatically checked when complete</li>
+                        <li><strong>Reorder:</strong> Click words in the Story Area to send them back</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>📊 Scoring</h3>
+                    <ul>
+                        <li><strong>Base Points:</strong> 100 + (50 × Level) per correct story</li>
+                        <li><strong>Time Bonus:</strong> 3 points per second remaining</li>
+                        <li><strong>Random Stories:</strong> Each level has multiple story variations</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🎮 Controls</h3>
+                    <ul>
+                        <li><strong>Show Hint:</strong> Get a clue about the story structure</li>
+                        <li><strong>New Game:</strong> Restart from Level 1</li>
+                        <li><strong>Share Story:</strong> Copy your creation to clipboard</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🏆 Tips</h3>
+                    <ul>
+                        <li>Think about grammar and sentence structure</li>
+                        <li>Articles (the, a, an) usually come before nouns</li>
+                        <li>Verbs typically follow subjects</li>
+                        <li>Use hints sparingly for better scores!</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="game-btn primary" id="startGameBtn">Start Playing!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="game-over-content">
+            <h2 class="game-over-title">⏰ Time's Up!</h2>
+            <div class="game-over-message" id="gameOverMessage">
+                Don't worry, try again! Practice makes perfect.
+            </div>
+            <div class="game-over-buttons">
+                <button class="game-over-btn primary" id="retryBtn">Retry Same Story</button>
+                <button class="game-over-btn" id="newStoryBtn">Try New Story</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <header class="game-header">
+            <h1 class="game-title">Story Builder</h1>
+            <div class="game-stats">
+                <div class="stat-item">Level: <span id="level-display">1</span></div>
+                <div class="stat-item">Score: <span id="score-display">0</span></div>
+                <div class="stat-item">Target: <span id="target-display">3</span> Words</div>
+            </div>
+        </header>
+
+        <div class="timer-container">
+            <div class="timer-bar" id="timer-bar"></div>
+            <div class="timer-text" id="timer-text">60s</div>
+        </div>
+
+        <main class="game-area">
+            <section class="drop-zone" id="drop-zone" role="region" aria-label="Story assembly area">
+                <h2 class="drop-zone-title">Build Your Story</h2>
+                <div class="drop-zone-placeholder">Drag words here to build your story</div>
+                <div class="drop-zone-cards" id="drop-zone-cards"></div>
+                
+            </section>
+
+            <section class="word-pool" id="word-pool" role="region" aria-label="Available words">
+                <h2 class="word-pool-title">Word Pool</h2>
+                <div class="word-cards" id="word-cards"></div>
+            </section>
+        </main>
+
+        <div class="feedback" id="feedback" role="alert" aria-live="polite">Drag words to the story area and arrange them in order</div>
+
+        <div class="game-controls">
+            <button class="game-btn" id="how-to-play-btn">How to Play</button>
+            <button class="game-btn" id="next-btn" style="display: none;">Next Level</button>
+            <button class="game-btn" id="replay-btn">New Game</button>
+            <button class="game-btn" id="share-btn" style="display: none;">Share Story</button>
+            <button class="game-btn primary" id="hint-btn">Show Hint</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

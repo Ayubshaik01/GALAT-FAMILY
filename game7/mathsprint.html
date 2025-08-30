@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Sprint - Galat Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+     <!-- Home Button  -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+    <div class="container">
+        <div id="home" class="fade-in">
+            <h1>🏃‍♂️⚡ Math Sprint </h1>
+            <label>Sound Effects: <input type="checkbox" id="sound-toggle" checked></label>
+            <button class="button" onclick="showModes()">Start Game</button>
+            <button class="button" onclick="showLeaderboard()">Leaderboard</button>
+            <button class="button" onclick="showInfo()">ℹ️ Info</button>
+        </div>
+        <div id="modes" style="display: none;" class="fade-in">
+            <h2>Choose Mode</h2>
+            <button class="button" onclick="selectMode('single')">Single Player vs AI</button>
+            <button class="button" onclick="selectMode('two')">Two Player</button>
+            <button class="button" onclick="selectMode('practice')">Practice Mode</button>
+        </div>
+        <div id="options" style="display: none;" class="fade-in">
+            <h2>Game Options</h2>
+            <div id="difficulty-select" style="display: none;">
+                <label>AI Difficulty:</label>
+                <select id="difficulty">
+                    <option>Easy</option>
+                    <option>Medium</option>
+                    <option>Hard</option>
+                    <option>Extreme</option>
+                </select>
+            </div>
+            <div id="rounds-select">
+                <label>Rounds:</label>
+                <select id="rounds">
+                    <option>3</option>
+                    <option>5</option>
+                    <option>7</option>
+                    <option>10</option>
+                </select>
+            </div>
+            <button class="button" onclick="startGame()">Start</button>
+        </div>
+        <div id="game" style="display: none;" class="fade-in">
+            <div id="scores">Player1: <span id="player1-score">0</span> <span id="player2-score"></span></div>
+            <div id="current-turn"></div>
+            <div class="card" id="problem-card">
+                <div class="problem" id="problem-text"></div>
+                <input type="number" id="answer-input" step="any">
+            </div>
+            <div class="timer-bar" id="player-timer"></div>
+            <div id="ai-timer-container" style="display: none;">
+                AI Thinking: <div class="timer-bar" id="ai-timer"></div>
+                <span id="ai-difficulty-tag"></span>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 20px;">
+                <button class="button" onclick="goHome()">Home</button>
+                <button class="button" onclick="restart()">Restart</button>
+            </div>
+        </div>
+        <div id="overlay">
+            <h1 id="winner-text"></h1>
+            <div id="crown" style="display: none;">👑</div>
+            <div class="card">Player1: <span id="final-player1"></span></div>
+            <div class="card" id="final-player2-card"></div>
+            <button class="button" onclick="restart()">Restart</button>
+            <button class="button" onclick="goHome()">Home</button>
+        </div>
+        <div id="info-modal">
+            <h2>Game Info</h2>
+            <p><strong>Rules:</strong> Solve math problems as fast as possible under time pressure. In Single mode, race against AI. In Two Player, take turns. Practice has no timer.</p>
+            <p><strong>Scoring:</strong> 10 points per correct answer, with multipliers for streaks (every 3 consecutive corrects).</p>
+            <p><strong>Controls:</strong> Type your answer and press Enter. Touch-friendly input.</p>
+            <button class="button" onclick="closeInfo()">Close</button>
+        </div>
+        <div id="leaderboard-modal">
+            <h2>Leaderboard (Single Player)</h2>
+            <ul id="leaderboard-list"></ul>
+            <button class="button" onclick="closeLeaderboard()">Close</button>
+        </div>
+        <div id="streak-banner"><span class="flame">🔥</span> Streak: <span id="streak-count"></span> (x<span id="multiplier"></span>)</div>
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+<script src="script.js"></script>
+</body>
+</html>

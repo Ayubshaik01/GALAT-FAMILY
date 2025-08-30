@@ -1,0 +1,337 @@
+:root {
+  --accent: #6b7280;
+  --text-color: #000000;
+  --bg-color: #ffffff;
+  --border-color: #000000;
+  --shadow-color: #000000;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+.container {
+  max-width: 90%;
+  width: 800px;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1,
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+.button {
+  background: var(--accent);
+  border: 5px solid var(--border-color);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+  padding: 12px 24px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  margin: 10px;
+  text-transform: uppercase;
+}
+.button:hover {
+  transform: scale(1.05);
+  box-shadow: 10px 10px 0 var(--shadow-color);
+}
+.card {
+  background: var(--bg-color);
+  border: 5px solid var(--border-color);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+  padding: 24px;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.problem {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+.timer-bar {
+  height: 20px;
+  background: var(--accent);
+  width: 100%;
+  transition: width linear;
+  border: 2px solid var(--border-color);
+}
+.glow-green {
+  animation: glow-green 0.5s ease;
+}
+@keyframes glow-green {
+  0% {
+    box-shadow: 5px 5px 0 var(--shadow-color);
+  }
+  50% {
+    box-shadow: 0 0 20px #00ff00;
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 5px 5px 0 var(--shadow-color);
+  }
+}
+.glow-red {
+  animation: glow-red 0.5s ease;
+}
+@keyframes glow-red {
+  0% {
+    box-shadow: 5px 5px 0 var(--shadow-color);
+  }
+  50% {
+    box-shadow: 0 0 20px #ff0000;
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 5px 5px 0 var(--shadow-color);
+  }
+}
+.shake {
+  animation: shake 0.5s ease;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+}
+.fade-in {
+  animation: fade-in 0.5s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fade-in 0.5s;
+  z-index: 5;
+}
+#crown {
+  font-size: 4rem;
+  animation: bounce 1s infinite;
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+#streak-banner {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffff00;
+  border: 3px solid var(--border-color);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+  padding: 12px 24px;
+  display: none;
+  font-size: 1.5rem;
+}
+.flame {
+  animation: flame 0.5s infinite;
+}
+@keyframes flame {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+#info-modal,
+#leaderboard-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  background: var(--bg-color);
+  border: 5px solid var(--border-color);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+  padding: 24px;
+  display: none;
+  z-index: 10;
+  text-align: left;
+}
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: none;
+  z-index: 4;
+}
+input[type="number"] {
+  font-size: 2rem;
+  text-align: center;
+  border: 3px solid var(--border-color);
+  padding: 8px;
+  width: 80%;
+  max-width: 200px;
+  margin-bottom: 20px;
+  background: var(--bg-color);
+}
+label {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  display: block;
+}
+select {
+  font-size: 1.2rem;
+  padding: 8px;
+  border: 3px solid var(--border-color);
+  background: var(--bg-color);
+  margin-bottom: 20px;
+}
+#scores {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+#current-turn {
+  font-size: 1.5rem;
+  margin: 10px 0;
+}
+#ai-timer-container {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  text-align: left;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  font-size: 1.2rem;
+  margin: 5px 0;
+}
+@media (max-width: 768px) {
+  h1,
+  h2 {
+    font-size: 2rem;
+  }
+  .problem {
+    font-size: 2.5rem;
+  }
+  .button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+  input[type="number"] {
+    font-size: 1.5rem;
+  }
+  #scores,
+  #current-turn {
+    font-size: 1.2rem;
+  }
+}
+@media (max-width: 480px) {
+  h1,
+  h2 {
+    font-size: 1.5rem;
+  }
+  .problem {
+    font-size: 2rem;
+  }
+  .button {
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin: 5px;
+  }
+  input[type="number"] {
+    font-size: 1.2rem;
+    width: 100%;
+  }
+  #scores,
+  #current-turn {
+    font-size: 1rem;
+  }
+  .card {
+    padding: 16px;
+  }
+}
+/* Universal Home Button Styling */
+.home-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #ffffff;
+  color: #000000;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 4px solid #000000;
+  box-shadow: 6px 6px 0 #808080;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  user-select: none;
+}
+
+.home-button:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 #808080;
+}
+
+.home-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #808080;
+}

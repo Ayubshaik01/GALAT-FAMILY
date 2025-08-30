@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galat Games</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎮%3C/text%3E%3C/svg%3E">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.4;
+            overflow-x: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.zoom-out {
+            transform: scale(0.98);
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #000000;
+            box-shadow: 0 6px 0 #808080;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #000000;
+            transition: transform 0.3s ease;
+            animation: slideInDown 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        h1:hover {
+            transform: scale(1.02) rotate(-0.5deg);
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: #666666;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            animation: slideInDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .random-game-container {
+            text-align: center;
+            margin: 30px 20px;
+            animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+        }
+
+        #random-game {
+            font-size: 1rem;
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: #ffffff;
+            border: 4px solid #000000;
+            box-shadow: 6px 6px 0 #808080;
+            padding: 12px 28px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #random-game::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+            transition: left 0.4s;
+        }
+
+        #random-game:hover::before {
+            left: 100%;
+        }
+
+        #random-game:hover {
+            box-shadow: 7px 7px 0 #808080;
+            transform: translate(-1px, -1px) scale(1.01);
+        }
+
+        #random-game:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #808080;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .game-card {
+            position: relative;
+            background-color: #f8f8f8;
+            border: 5px solid #000000;
+            box-shadow: 8px 8px 0 #808080;
+            height: 280px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            will-change: transform;
+        }
+
+        .game-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: zoomIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.02) rotate(0.5deg);
+            box-shadow: 12px 12px 0 #808080;
+            background-color: #ffffff;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .game-logo {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: brightness(1) contrast(1.1);
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .game-card:hover .game-logo {
+            transform: scale(1.05);
+            filter: brightness(0.95) contrast(1.1);
+        }
+
+        .game-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 4px solid #000000;
+            padding: 15px;
+            text-align: center;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .game-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #000000;
+            margin-bottom: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover .game-title {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 80px;
+            background: rgba(0, 0, 0, 0.92);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(-100%) scale(0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(8px);
+        }
+
+        .play-button {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            border: 4px solid #ffffff;
+            font-weight: bold;
+            letter-spacing: 0.03em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 4px 0 rgba(128, 128, 128, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+            transition: left 0.4s;
+        }
+
+        .play-button:hover::before {
+            left: 100%;
+        }
+
+        .play-button:hover {
+            background-color: #000000;
+            color: #ffffff;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 5px 5px 0 rgba(128, 128, 128, 0.7);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .game-card:hover .game-overlay {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .game-card.active .game-overlay {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            .game-card.active .game-logo {
+                transform: scale(1.1);
+                filter: brightness(0.9);
+            }
+        }
+
+        footer {
+            background-color: #ffffff;
+            padding: 25px 20px;
+            text-align: center;
+            border-top: 4px solid #000000;
+            box-shadow: 0 -6px 0 #808080;
+            margin-top: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        footer.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            color: #666666;
+            font-family: Arial, sans-serif;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #000000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .transition-content {
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            main {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .tagline {
+                font-size: 0.9rem;
+            }
+
+            main {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 25px;
+                margin: 30px auto;
+                padding: 0 15px;
+            }
+
+            .game-card {
+                height: 250px;
+            }
+
+            .game-logo {
+                height: 170px;
+            }
+
+            .game-title {
+                font-size: 1rem;
+            }
+
+            .play-button {
+                font-size: 1rem;
+                padding: 12px 24px;
+            }
+
+            #random-game {
+                font-size: 0.9rem;
+                padding: 10px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 12px 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            main {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 10px;
+            }
+
+            .game-card {
+                height: 220px;
+            }
+
+            .game-logo {
+                height: 150px;
+            }
+
+            .game-info {
+                height: 70px;
+                padding: 10px;
+            }
+
+            .game-title {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Accessibility */
+        a:focus, button:focus {
+            outline: 3px solid #000000;
+            outline-offset: 3px;
+        }
+
+        .game-card:focus {
+            outline: 3px solid #000000;
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Performance optimizations */
+        .game-card {
+            contain: layout style paint;
+        }
+
+        .game-logo {
+            contain: layout style paint;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page transition overlay -->
+    <div class="page-transition" id="pageTransition">
+        <div class="transition-content">Loading Game...</div>
+    </div>
+
+    <header>
+        <h1>Galat Games</h1>
+        <p class="tagline">Play free mini games. No installs. Just fun!</p>
+    </header>
+
+    <div class="random-game-container">
+        <button id="random-game">🎲 Play Random Game</button>
+    </div>
+
+    <main id="games-grid">
+        <div class="game-card" role="button" tabindex="0" aria-label="Memory Builder Game">
+            <img src="https://as2.ftcdn.net/v2/jpg/01/96/94/99/1000_F_196949923_tIvaRBN58YxyXBEa1R3xHFYKmtm5BzHv.jpg" alt="Memory Builder" class="game-logo">
+            <div class="game-overlay">
+                <a href="game1/memorybuilder.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Memory Builder</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Type Challenge Game">
+            <img src="https://static.vecteezy.com/system/resources/previews/014/627/516/original/keyboard-typing-icon-outline-style-vector.jpg" alt="Type Challenge" class="game-logo">
+            <div class="game-overlay">
+                <a href="game2/typechallenge.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Type Challenge</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Story Builder Game">
+            <img src="https://tse4.mm.bing.net/th/id/OIP.y8m0VDId2at65syOp5UeugHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Story Builder" class="game-logo">
+            <div class="game-overlay">
+                <a href="game3/storybuilder.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Story Builder</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Tic Tac Toe Game">
+            <img src="https://as1.ftcdn.net/v2/jpg/02/48/63/22/1000_F_248632285_hc2bO4QO3SEba2XShbz5u4AapU6DhedF.jpg" alt="Tic Tac Toe" class="game-logo">
+            <div class="game-overlay">
+                <a href="game4/tic-tac-toe.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Tic Tac Toe</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Rock Paper Scissors Game">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.lCjG-8JRO9a1Wg0lW6EmfwHaDv?w=570&h=288&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Rock Paper Scissors" class="game-logo">
+            <div class="game-overlay">
+                <a href="game5/rps.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Rock Paper Scissors</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Reaction Tracker Game">
+            <img src="https://tse1.mm.bing.net/th/id/OIP.s3JiZLF8QUsKVCoYTuKN0wHaD4?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Reaction Tracker" class="game-logo">
+            <div class="game-overlay">
+                <a href="game6/reaction_tracker.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Reaction Tracker</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Math Sprint Game">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.XNf5TDRjelqFsaAszeWiNwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Math Sprint" class="game-logo">
+            <div class="game-overlay">
+                <a href="game7/mathsprint.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Math Sprint</h2>
+            </div>
+        </div>
+
+        <div class="game-card" role="button" tabindex="0" aria-label="Slapping Bird Game">
+            <img src="https://images.launchbox-app.com/0fdd064b-9212-4812-961a-6d3db8d90847.png" alt="Slapping Bird" class="game-logo">
+            <div class="game-overlay">
+                <a href="game8/index.html" class="play-button">Play Now</a>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">Flappy Bird</h2>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <p>© 2025 Galat Games. Built for Hackathon Awesomeness.</p>
+    </footer>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameCards = document.querySelectorAll('.game-card');
+            const footer = document.getElementById('footer');
+            const pageTransition = document.getElementById('pageTransition');
+            let activeCard = null;
+
+            // Fast Intersection Observer for cards
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 100); // Faster stagger
+                    }
+                });
+            }, { 
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            gameCards.forEach(card => cardObserver.observe(card));
+
+            // Footer observer
+            const footerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        footer.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            footerObserver.observe(footer);
+
+            // Random game with fast feedback
+            const randomGameBtn = document.getElementById('random-game');
+            randomGameBtn.addEventListener('click', () => {
+                randomGameBtn.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    const randomCard = gameCards[Math.floor(Math.random() * gameCards.length)];
+                    randomCard.style.transform = 'translateY(-12px) scale(1.05) rotate(2deg)';
+                    randomCard.style.boxShadow = '0 0 25px rgba(255, 215, 0, 0.8)';
+                    
+                    setTimeout(() => {
+                        const playBtn = randomCard.querySelector('.play-button');
+                        playBtn.click();
+                    }, 400);
+                    
+                    randomGameBtn.style.transform = 'scale(1)';
+                }, 150);
+            });
+
+            gameCards.forEach((card, index) => {
+                card.addEventListener('click', (e) => {
+                    const isTouchDevice = 'ontouchstart' in window;
+                    
+                    if (isTouchDevice && e.target === card) {
+                        e.preventDefault();
+                        
+                        if (activeCard && activeCard !== card) {
+                            activeCard.classList.remove('active');
+                        }
+                        
+                        card.classList.toggle('active');
+                        activeCard = card.classList.contains('active') ? card : null;
+                        
+                        // Quick haptic feedback
+                        if ('vibrate' in navigator) {
+                            navigator.vibrate(30);
+                        }
+                    }
+                });
+
+                const playButton = card.querySelector('.play-button');
+                playButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.body.classList.add('zoom-out');
+                    pageTransition.classList.add('active');
+                    
+                    // Navigate faster
+                    setTimeout(() => {
+                        window.location.href = playButton.href;
+                    }, 300);
+                });
+
+                // Keyboard navigation
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        playButton.click();
+                    }
+                    
+                    // Arrow navigation
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                        const nextCard = gameCards[index + 1] || gameCards[0];
+                        nextCard.focus();
+                    }
+                    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        const prevCard = gameCards[index - 1] || gameCards[gameCards.length - 1];
+                        prevCard.focus();
+                    }
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.game-card') && activeCard) {
+                    activeCard.classList.remove('active');
+                    activeCard = null;
+                }
+            });
+
+            const performanceObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const target = entry.target;
+                    if (entry.isIntersecting) {
+                        target.style.willChange = 'transform, box-shadow';
+                    } else {
+                        target.style.willChange = 'auto';
+                    }
+                });
+            });
+
+            gameCards.forEach(card => performanceObserver.observe(card));
+
+            const loading = document.getElementById('loading');
+            if (loading.style.display === 'flex') {
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>

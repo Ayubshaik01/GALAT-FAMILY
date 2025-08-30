@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>flappy bird - Galat Games</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+   <!-- Home Button  -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+  <div id="app" class="page" role="application" aria-label="flappy neu game">
+
+    <main id="panel-play" class="card center" aria-label="game area">
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="game-canvas" width="360" height="640" aria-label="game canvas" tabindex="0"></canvas>
+
+        <button id="hamburger-btn" class="hamburger" aria-expanded="false" aria-controls="canvas-hamburger-menu" aria-label="open controls menu">
+          <span class="hamburger-bar" aria-hidden="true"></span>
+        </button>
+
+        <div id="canvas-hamburger-menu" class="hamburger-menu card" role="menu" aria-hidden="true">
+          <h2>controls</h2>
+          <button id="btn-start" class="control" aria-label="start game">start</button>
+          <button id="btn-restart" class="control" aria-label="restart game">restart</button>
+
+          <div class="control-group">
+            <label for="difficulty">difficulty</label>
+            <select id="difficulty" aria-label="game difficulty">
+              <option value="normal">normal</option>
+              <option value="easy">easy</option>
+              <option value="hard">hard</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label><input id="mute-toggle" type="checkbox" /> mute</label>
+          </div>
+
+          <div class="control-group small">
+            <div>touch: tap = flap <br> long-press = pause <br> keyboard: p = pause</div>
+          </div>
+        </div>
+        <div id="canvas-stats" class="card canvas-stats" aria-label="game stats" aria-hidden="false">
+          <div class="stat"><span>score</span><strong id="score" aria-live="polite">0</strong></div>
+          <div class="stat"><span>best</span><strong id="best">0</strong></div>
+          <div class="stat"><span>status</span><strong id="status">ready</strong></div>
+          <label class="grid-toggle">
+            <input type="checkbox" id="css-grid-toggle" aria-label="toggle canvas grid" />
+            canvas grid
+          </label>
+        </div>
+        <div id="welcome-overlay" class="welcome-overlay" aria-hidden="true">
+          <div class="welcome-text">
+            welcome to flappy bird game
+          </div>
+          <div class="welcome-hint">press space or tap to start</div>
+        </div>
+      </div>
+      <div id="hud" class="hud" aria-hidden="true">
+        <div>fps: <span id="fps">0</span></div>
+        <div>pipes: <span id="pipes-count">0</span></div>
+        <div>bird y: <span id="bird-y">0</span></div>
+        <div>velocity: <span id="bird-v">0</span></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="sounds.js"></script>
+  <script src="game.js" defer></script>
+</body>
+</html>

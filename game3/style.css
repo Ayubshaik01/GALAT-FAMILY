@@ -1,0 +1,800 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  font-family: "Courier New", monospace;
+  background-color: white;
+  color: black;
+  line-height: 1.4;
+  height: 100vh;
+  font-weight: bold;
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem;
+  gap: 0.5rem;
+}
+
+/* Universal Home Button Styling */
+.home-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #ffffff;
+  color: #000000;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 4px solid #000000;
+  box-shadow: 6px 6px 0 #808080;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  user-select: none;
+}
+
+.home-button:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 #808080;
+}
+
+.home-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #808080;
+}
+
+.game-header {
+  text-align: center;
+  border: 3px solid black;
+  padding: 1rem;
+  background-color: white;
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+.game-title {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.game-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  padding: 0.5rem 0.75rem;
+  border: 2px solid black;
+  background-color: white;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.timer-container {
+  width: 100%;
+  height: 1.5rem;
+  border: 2px solid black;
+  background-color: white;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.timer-bar {
+  height: 100%;
+  background-color: black;
+  width: 100%;
+  transition: width 0.1s linear;
+  transform-origin: left;
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.75rem;
+  z-index: 2;
+  mix-blend-mode: difference;
+  font-weight: bold;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.game-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.drop-zone {
+  border: 3px dashed black;
+  padding: 1rem;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  min-height: 200px;
+}
+
+.drop-zone::-webkit-scrollbar {
+  width: 4px;
+}
+
+.drop-zone::-webkit-scrollbar-track {
+  background: white;
+}
+
+.drop-zone::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+.drop-zone.drag-over {
+  background-color: #e8f4fd;
+  border-color: #0066cc;
+  transform: scale(1.01);
+  box-shadow: inset 0 0 10px rgba(0, 102, 204, 0.2);
+}
+
+.drop-zone-title {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.drop-zone-placeholder {
+  color: #666;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.drop-zone.has-cards .drop-zone-placeholder {
+  display: none;
+}
+
+.drop-zone-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 50px;
+}
+
+.word-pool {
+  border: 3px solid black;
+  padding: 1rem;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.word-pool::-webkit-scrollbar {
+  width: 4px;
+}
+
+.word-pool::-webkit-scrollbar-track {
+  background: white;
+}
+
+.word-pool::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+.word-pool-title {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.word-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-content: flex-start;
+}
+
+.word-card {
+  background-color: white;
+  border: 2px solid black;
+  padding: 0.75rem 1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  cursor: grab;
+  user-select: none;
+  transition: all 0.1s ease-out;
+  box-shadow: 2px 2px 0 black;
+  min-width: 80px;
+  max-width: 180px;
+  text-align: center;
+  word-wrap: break-word;
+  touch-action: manipulation;
+  transform-origin: center;
+  position: relative;
+  z-index: 1;
+}
+
+.word-card:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 3px 3px 0 black;
+  z-index: 10;
+}
+
+.word-card:active {
+  cursor: grabbing;
+  transform: scale(1.02);
+  transition: transform 0.05s ease;
+}
+
+.word-card.dragging {
+  opacity: 0.6;
+  transform: rotate(3deg) scale(1.05);
+  z-index: 1000;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+  border-color: #0066cc;
+}
+
+.word-card.ghost {
+  opacity: 0.3;
+  transform: scale(0.9);
+}
+
+.game-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  flex-shrink: 0;
+}
+
+.game-btn {
+  background-color: white;
+  border: 3px solid black;
+  padding: 0.75rem 1rem;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-btn:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.game-btn:active {
+  transform: translateY(0);
+  transition: transform 0.05s ease;
+}
+
+.game-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.game-btn.primary {
+  background-color: black;
+  color: white;
+}
+
+.game-btn.primary:hover:not(:disabled) {
+  background-color: #333;
+}
+
+.feedback {
+  text-align: center;
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #666;
+  padding: 0.75rem;
+  border-radius: 0;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.feedback.success {
+  color: #006600;
+  border-color: #006600;
+  background-color: #f0fff0;
+  animation: successPulse 0.3s ease;
+}
+
+.feedback.error {
+  color: #cc0000;
+  border-color: #cc0000;
+  background-color: #fff0f0;
+  animation: errorShake 0.3s ease;
+}
+
+.feedback.neutral {
+  color: #333;
+  border-color: #333;
+  background-color: #f0f0f0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background-color: white;
+  border: 4px solid black;
+  padding: 2rem;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.modal-body {
+  line-height: 1.6;
+}
+
+.modal-section {
+  margin-bottom: 1.5rem;
+}
+
+.modal-section h3 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid black;
+  padding-bottom: 0.25rem;
+}
+
+.modal-section p,
+.modal-section li {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-section ul {
+  padding-left: 1.5rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.modal-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.game-over-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: none;
+  z-index: 3000;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.game-over-modal.active {
+  display: flex;
+}
+
+.game-over-content {
+  background-color: white;
+  border: 4px solid black;
+  padding: 2rem;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+}
+
+.game-over-title {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  color: #cc0000;
+}
+
+.game-over-message {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  line-height: 1.4;
+}
+
+.game-over-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.game-over-btn {
+  background-color: white;
+  border: 3px solid black;
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s ease;
+}
+
+.game-over-btn:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.game-over-btn.primary {
+  background-color: black;
+  color: white;
+}
+
+.game-over-btn.primary:hover {
+  background-color: #333;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes errorShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .home-button {
+    top: 0.25rem;
+    left: 0.25rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    gap: 0.3rem;
+  }
+
+  .game-header {
+    margin-top: 0.25rem;
+    padding: 0.75rem;
+  }
+
+  .game-container {
+    padding: 0.25rem;
+    gap: 0.25rem;
+  }
+
+  .game-area {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .drop-zone,
+  .word-pool {
+    padding: 0.75rem;
+    min-height: 150px;
+  }
+
+  .word-card {
+    min-width: 70px;
+    max-width: 140px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .game-controls {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+  }
+
+  .timer-container {
+    height: 1.25rem;
+  }
+
+  .feedback {
+    height: 2.5rem;
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+  }
+
+  .stat-item {
+    font-size: clamp(0.7rem, 2vw, 0.9rem);
+    padding: 0.4rem 0.5rem;
+  }
+
+  .game-over-content {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
+
+  .game-over-title {
+    font-size: 1.5rem;
+  }
+
+  .game-over-buttons {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-button {
+    top: 0.125rem;
+    left: 0.125rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    gap: 0.25rem;
+  }
+
+  .game-container {
+    padding: 0.125rem;
+  }
+
+  .game-header {
+    margin-top: 0.125rem;
+    padding: 0.5rem;
+  }
+
+  .game-title {
+    margin-bottom: 0.25rem;
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+  }
+
+  .word-card {
+    min-width: 60px;
+    max-width: 120px;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .drop-zone,
+  .word-pool {
+    padding: 0.5rem;
+    min-height: 120px;
+  }
+
+  .game-controls {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .feedback {
+    height: 2rem;
+    padding: 0.5rem;
+    font-size: clamp(0.7rem, 2vw, 0.9rem);
+  }
+
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .stat-item {
+    font-size: clamp(0.6rem, 1.8vw, 0.8rem);
+    padding: 0.3rem 0.4rem;
+  }
+
+  .game-over-content {
+    padding: 1rem;
+  }
+
+  .game-over-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .game-container {
+    gap: 0.25rem;
+  }
+
+  .game-header {
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .game-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .drop-zone,
+  .word-pool {
+    min-height: 100px;
+    padding: 0.5rem;
+  }
+
+  .feedback {
+    height: 1.5rem;
+    padding: 0.25rem;
+  }
+
+  .timer-container {
+    height: 1rem;
+  }
+}
+
+@media (hover: none) {
+  .word-card:hover {
+    transform: none;
+    box-shadow: 2px 2px 0 black;
+  }
+
+  .word-card:active {
+    transform: scale(1.05);
+    box-shadow: 3px 3px 0 black;
+  }
+
+  .game-btn:hover,
+  .home-button:hover {
+    background-color: white;
+    transform: none;
+  }
+
+  .home-button:hover {
+    background-color: black;
+  }
+
+  .game-btn:active,
+  .home-button:active {
+    background-color: #f0f0f0;
+    transform: scale(0.98);
+  }
+
+  .home-button:active {
+    background-color: #333;
+  }
+}
+
+.word-card:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.game-btn:focus,
+.home-button:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-card,
+  .timer-bar,
+  .drop-zone,
+  .feedback,
+  .game-btn,
+  .home-button {
+    transition: none;
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .word-card {
+    border-width: 3px;
+  }
+
+  .drop-zone {
+    border-width: 4px;
+  }
+
+  .word-pool {
+    border-width: 4px;
+  }
+}

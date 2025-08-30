@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock-Paper-Scissors - Galat Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Home Button  -->
+    <a href="../index.html" class="home-button" aria-label="Return to home">
+        ← HOME
+    </a>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="container">
+<h1>Rock Paper Scissors
+<span class="info-icon" id="infoIcon">i</span>
+</h1>
+<div class="menu">
+  <div class="select-group">
+    <label for="rounds">Rounds:</label>
+    <select id="rounds">
+      <option value="3">3</option>
+      <option value="5" selected>5</option>
+      <option value="7">7</option>
+    </select>
+    <label for="aiLevel" id="aiLabel">AI Level:</label>
+    <select id="aiLevel">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+  </div>
+  <button class="btn" id="aiBtn">Play vs AI</button>
+  <button class="btn" id="friendBtn">Play with Friend</button>
+</div>
+
+<div class="game">
+  <div class="scoreboard">
+    <div class="score" id="p1Score">Player 1: 0</div>
+    <div class="score" id="p2Score">Player 2: 0</div>
+  </div>
+  <div class="round-display" id="roundDisplay">Round 1 / 5</div>
+  <div class="turn-display" id="turnDisplay">Turn: Player 1</div>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="cards" id="playerCards">
+    <div class="card" data-choice="rock"><div class="card-inner"><div class="card-front">🪨<div class="card-label">Rock</div></div><div class="card-back"></div></div></div>
+    <div class="card" data-choice="paper"><div class="card-inner"><div class="card-front">📄<div class="card-label">Paper</div></div><div class="card-back"></div></div></div>
+    <div class="card" data-choice="scissors"><div class="card-inner"><div class="card-front">✂️<div class="card-label">Scissors</div></div><div class="card-back"></div></div></div>
+  </div>
+
+  <div class="result" id="resultText" aria-live="polite"></div>
+</div>
+</div>
+
+<!-- Winner Overlay -->
+<div id="winnerOverlay"></div>
+
+<!-- Info Modal -->
+<div id="infoModal">
+  <div>
+    <h2>Game Rules & Info</h2>
+    <p>Rock beats Scissors. ✂️<br>Paper beats Rock. 🪨<br>Scissors beats Paper. 📄<br>First to win majority of rounds wins the game.</p>
+    <p>Play against AI or a Friend! AI difficulty is adjustable.</p>
+    <button class="close-btn" id="closeInfo">Close</button>
+  </div>
+</div>
+<script src="script.js"></script>
+
+</body>
+</html>

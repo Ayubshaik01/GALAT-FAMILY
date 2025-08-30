@@ -1,0 +1,637 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Courier New", monospace;
+  background: #ffffff;
+  color: #000000;
+  font-weight: bold;
+  overflow: hidden;
+  user-select: none;
+}
+
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --gray: #666666;
+  --border-width: 4px;
+  --shadow-offset: 6px;
+}
+/* Universal Home Button Styling */
+.home-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #ffffff;
+  color: #000000;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 4px solid #000000;
+  box-shadow: 6px 6px 0 #808080;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  user-select: none;
+}
+
+.home-button:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 #808080;
+}
+
+.home-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #808080;
+}
+
+/* Full viewport layout */
+.page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brutalist card styling */
+.card {
+  background: var(--white);
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+  position: relative;
+}
+
+.card h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--black);
+  font-weight: bold;
+}
+
+/* Desktop: 70% width, Mobile: full viewport */
+.canvas-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: var(--white);
+  overflow: hidden;
+}
+
+/* Responsive canvas sizing */
+canvas {
+  display: block;
+  background: var(--white);
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+  outline: none;
+  cursor: pointer;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+canvas:focus {
+  outline: 4px solid var(--black);
+  outline-offset: 4px;
+}
+
+/* Game stats - positioned absolutely */
+.canvas-stats {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: 320px;
+  padding: 16px 20px;
+  background: var(--white);
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  font-family: "Courier New", monospace;
+}
+
+.canvas-stats .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.canvas-stats .stat span {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--gray);
+  letter-spacing: 1px;
+}
+
+.canvas-stats .stat strong {
+  font-size: 20px;
+  color: var(--black);
+  font-weight: bold;
+}
+
+.canvas-stats .grid-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--gray);
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* Welcome overlay - improved UX */
+.welcome-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(2px);
+}
+
+.welcome-overlay .welcome-text {
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: var(--white);
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+  padding: 20px 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.welcome-hint {
+  font-size: 16px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--white);
+  border: 2px solid var(--gray);
+  padding: 12px 20px;
+  text-align: center;
+}
+
+.welcome-bird {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--black);
+  border-radius: 50%;
+  animation: birdFloat 2s ease-in-out infinite;
+}
+
+@keyframes birdFloat {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-4px);
+  }
+}
+
+.fade-out {
+  animation: welcomeFade 420ms ease forwards;
+}
+
+@keyframes welcomeFade {
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+    visibility: hidden;
+  }
+}
+
+/* Hamburger menu - brutalist style */
+.hamburger {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+  cursor: pointer;
+  z-index: 55;
+  transition: none;
+}
+
+.hamburger:hover {
+  background: var(--black);
+}
+
+.hamburger:hover .hamburger-bar {
+  background: var(--white);
+  box-shadow: 0 6px 0 0 var(--white), 0 -6px 0 0 var(--white);
+}
+
+.hamburger:active {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0 0 var(--black);
+}
+
+.hamburger:focus {
+  outline: 4px solid var(--black);
+  outline-offset: 4px;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 24px;
+  height: 4px;
+  background: var(--black);
+  box-shadow: 0 8px 0 0 var(--black), 0 -8px 0 0 var(--black);
+  transition: none;
+}
+
+/* Dropdown menu - improved UX */
+.hamburger-menu {
+  position: absolute;
+  right: 20px;
+  top: 90px;
+  width: 280px;
+  padding: 20px;
+  background: var(--white);
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+  z-index: 50;
+  display: none;
+}
+
+.hamburger-menu h2 {
+  border-bottom: 3px solid var(--black);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+/* Game controls - brutalist buttons */
+.control {
+  width: 100%;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border: 3px solid var(--black);
+  background: var(--white);
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: none;
+}
+
+.control:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+.control:active {
+  transform: translate(2px, 2px);
+}
+
+.control:focus {
+  outline: 3px solid var(--black);
+  outline-offset: 3px;
+}
+
+.control-group {
+  margin-bottom: 16px;
+}
+
+.control-group label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+
+.control-group select {
+  width: 100%;
+  padding: 12px;
+  border: 3px solid var(--black);
+  background: var(--white);
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.control-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  accent-color: var(--black);
+}
+
+.small {
+  font-size: 11px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.4;
+  border: 2px solid var(--gray);
+  padding: 12px;
+  background: #f5f5f5;
+}
+
+/* HUD - debug info */
+.hud {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  padding: 16px;
+  background: var(--white);
+  border: 3px solid var(--black);
+  box-shadow: 4px 4px 0 0 var(--black);
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 45;
+  display: none;
+}
+
+.hud div {
+  margin-bottom: 4px;
+}
+
+/* Responsive design */
+@media (min-width: 769px) {
+  /* Desktop: 70% width */
+  .canvas-wrap {
+    padding: 0 15vw; /* Centers and creates 70% width */
+  }
+
+  canvas {
+    width: 70vw;
+    height: 80vh;
+    max-width: 500px;
+    max-height: 700px;
+  }
+
+  .canvas-stats {
+    min-width: 400px;
+    bottom: 40px;
+  }
+
+  .hamburger {
+    right: 40px;
+    top: 40px;
+  }
+
+  .hamburger-menu {
+    right: 40px;
+    top: 120px;
+    width: 320px;
+  }
+
+  .hud {
+    left: 40px;
+    top: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile: full viewport */
+  canvas {
+    width: 100vw;
+    height: 100vh;
+    border: none; /* Remove border on mobile for full screen */
+    box-shadow: none;
+  }
+
+  .canvas-stats {
+    bottom: 16px;
+    min-width: 280px;
+    padding: 12px 16px;
+    gap: 16px;
+  }
+
+  .canvas-stats .stat span {
+    font-size: 10px;
+  }
+
+  .canvas-stats .stat strong {
+    font-size: 16px;
+  }
+
+  .hamburger {
+    width: 50px;
+    height: 50px;
+    right: 16px;
+    top: 16px;
+  }
+
+  .hamburger-menu {
+    width: 240px;
+    right: 16px;
+    top: 80px;
+    padding: 16px;
+  }
+
+  .welcome-overlay .welcome-text {
+    font-size: 20px;
+    padding: 16px 24px;
+  }
+
+  .welcome-hint {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  .hud {
+    left: 16px;
+    top: 16px;
+    padding: 12px;
+  }
+
+  .control {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-stats {
+    flex-direction: column;
+    gap: 8px;
+    bottom: 12px;
+    min-width: 200px;
+    padding: 10px 12px;
+  }
+
+  .canvas-stats .stat {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .hamburger {
+    width: 44px;
+    height: 44px;
+    right: 12px;
+    top: 12px;
+  }
+
+  .hamburger-menu {
+    width: 220px;
+    right: 12px;
+    top: 70px;
+    padding: 12px;
+  }
+
+  .welcome-overlay .welcome-text {
+    font-size: 18px;
+    padding: 12px 20px;
+  }
+
+  .welcome-hint {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .control {
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+
+  .hamburger-bar {
+    width: 20px;
+    height: 3px;
+    box-shadow: 0 6px 0 0 var(--black), 0 -6px 0 0 var(--black);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .canvas-stats {
+    bottom: 8px;
+    padding: 8px 12px;
+  }
+
+  .hamburger {
+    top: 8px;
+    right: 8px;
+  }
+
+  .hamburger-menu {
+    top: 60px;
+    right: 8px;
+  }
+
+  .hud {
+    top: 8px;
+    left: 8px;
+    padding: 8px;
+  }
+}
+
+/* Touch improvements */
+@media (hover: none) {
+  .hamburger:hover {
+    background: var(--white);
+  }
+
+  .hamburger:hover .hamburger-bar {
+    background: var(--black);
+    box-shadow: 0 8px 0 0 var(--black), 0 -8px 0 0 var(--black);
+  }
+
+  .control:hover {
+    background: var(--white);
+    color: var(--black);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .welcome-bird {
+    animation: none;
+  }
+
+  .fade-out {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --border-width: 5px;
+    --shadow-offset: 8px;
+  }
+}
+
+/* Focus improvements */
+.canvas-stats label:focus-within {
+  outline: 3px solid var(--black);
+  outline-offset: 2px;
+}
+
+/* Better checkbox styling */
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--black);
+  background: var(--white);
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--black);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  color: var(--white);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+input[type="checkbox"]:focus {
+  outline: 3px solid var(--black);
+  outline-offset: 2px;
+}
